@@ -1,0 +1,138 @@
+/* Navbar */
+.navbar {
+    height: 70px;  /* Ajusta la altura del navbar si es necesario */
+}
+
+.navbar-brand img {
+    height: 50px;  /* Ajusta el tamaño del logo */
+    width: auto;   /* Mantener la proporción del logo */
+    vertical-align: middle; /* Alineación vertical del logo */
+}
+
+.navbar-nav {
+    display: flex;
+    justify-content: center; /* Asegura que los enlaces estén centrados */
+    align-items: center; /* Asegura que los elementos estén centrados verticalmente */
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    padding-top: 0; /* Elimina cualquier espacio extra en la parte superior */
+    padding-bottom: 0; /* Elimina cualquier espacio extra en la parte inferior */
+}
+html {
+    scroll-behavior: smooth;  /* Esto hace que el desplazamiento sea suave */
+}
+/* seccion titulo promociones */
+.promociones-title {
+    font-size: 2.5rem;  /* Tamaño de fuente grande para el título */
+    font-weight: bold;  /* Negrita */
+    color: #004085;  /* Color azul oscuro */
+    margin-bottom: 20px;  /* Espaciado debajo del título */
+}
+/* seccion descripcion promociones */
+.promociones-description {
+    font-size: 1.2rem;  /* Tamaño de fuente moderado para la descripción */
+    color: #555;  /* Color gris para el texto */
+    margin-bottom: 30px;  /* Espaciado debajo del párrafo */
+    line-height: 1.6;  /* Aumenta el espacio entre líneas para mayor legibilidad */
+}
+/*SECCION CARDS*/
+.promociones-section {
+    margin-top: 50px;
+    padding: 20px;
+}
+
+.promotion-image img {
+    max-width: 100%; /* Asegura que las imágenes no sobrepasen el tamaño del contenedor */
+    height: auto;    /* Mantiene la relación de aspecto */
+}
+
+.promotion-container {
+    background-color: #f8f9fa; /* Un fondo claro para las promociones */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.promotion-text {
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.promotion-text h3 {
+    margin-bottom: 10px;
+}
+
+.promotion-text p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.promotion-btn {
+    width: 200px;  /* Establece un tamaño fijo para los botones */
+    margin-top: 10px;
+}
+/* Estilos para los títulos de los cards de promociones */
+.promotion-text h3 {
+    font-size: 1.8rem;  /* Tamaño de la fuente */
+    font-weight: bold;  /* Hacer el texto en negrita */
+    color: #007bff;     /* Color del texto, puedes cambiarlo a tu preferencia */
+    margin-bottom: 15px;  /* Espacio debajo del título */
+    text-align: left;  /* Centra el texto */
+    text-transform: uppercase;  /* Poner el texto en mayúsculas */
+}
+
+
+/* Estilo básico del footer */
+.footer-basic {
+    background-color: #f8f9fa;  /* Fondo gris claro */
+    color: #343a40;  /* Texto oscuro */
+    padding: 40px 0;
+}
+
+.footer-basic .social {
+    margin-bottom: 20px;
+}
+
+.footer-basic .social a {
+    text-decoration: none;
+}
+
+.footer-basic .social-icon {
+    width: 30px; /* Tamaño de los íconos */
+    height: 30px;
+    transition: transform 0.3s ease;
+}
+
+.footer-basic .social-icon:hover {
+    transform: scale(1.1);  /* Aumentar el tamaño cuando pasa el cursor */
+}
+
+.footer-basic .row h5 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.footer-basic .row ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-basic .row ul li a {
+    text-decoration: none;
+    color: #343a40;
+}
+
+.footer-basic .row ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-basic .download-app img {
+    width: 120px;
+    height: auto;
+}
+
+.footer-basic .text-center {
+    font-size: 14px;
+    color: #6c757d;  /* Gris claro para el copyright */
+}

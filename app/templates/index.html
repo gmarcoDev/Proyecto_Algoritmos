@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ data['titulo'] }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid d-flex justify-content-between">
+        <!-- Botón para mostrar el menú en pantallas pequeñas -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menú de navegación centrado -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <a class="navbar-brand" href="/">
+                    <img src="{{ url_for('static', filename='images/logo3.png') }}" alt="Logo CineDB" style="height: 100px; width: auto;">
+                </a>
+                <li class="nav-item">
+                    <a class="nav-link" href="/peliculas">Películas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cines">Cines</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#promociones">Promociones</a> <!-- Enlace de anclaje -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dulceria">Dulcería</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Logo" style="height: 100px; width: auto;">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/login">Iniciar sesión</a>
+                        <a class="dropdown-item" href="/registrarse">Registrarse</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Header -->
+<header class="text-center mt-4">
+    <h1>{{ data['titulo'] }}</h1>
+    <p>{{ data['bienvenida'] }}</p>
+</header>
+
+<!-- Cards de películas en la página principal -->
+<div class="d-flex justify-content-between align-items-center mx-auto" style="max-width: 35rem;">
+    <a href="{{ url_for('ver_pelicula', indice=data['pelicula_actual'].anterior.indice) }}" class="btn btn-secondary">Anterior</a>
+    <div class="card" style="width: 20rem;">
+        <img src="{{ url_for('static', filename='images/' + data['pelicula_actual'].imagen) }}" class="card-img-top" alt="{{ data['pelicula_actual'].titulo }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ data['pelicula_actual'].titulo }}</h5>
+            <p class="card-text">{{ data['pelicula_actual'].descripcion }}</p>
+            <a href="#" class="btn btn-primary">Comprar Entradas</a>
+        </div>
+    </div>
+    <a href="{{ url_for('ver_pelicula', indice=data['pelicula_actual'].siguiente.indice) }}" class="btn btn-secondary">Siguiente</a>
+</div>
+
+<!-- Sección de promociones con el id -->
+<!-- Sección de promociones con el id -->
+<section id="promociones" class="promociones-section text-center">
+    <h2 class="promociones-title">Promociones Especiales</h2>
+    <p class="promociones-description">¡No te pierdas nuestras ofertas especiales para este mes!</p>
+
+    <!-- Fila 1 de promociones -->
+    <div class="row justify-content-center mb-4">
+        <!-- Promoción 1 -->
+        <div class="col-md-6 mb-4">
+            <div class="promotion-container d-flex justify-content-center align-items-center">
+                <div class="promotion-image">
+                    <img src="{{ url_for('static', filename='images/promotion1.jpg') }}" alt="Promoción 1" class="img-fluid">
+                </div>
+                <div class="promotion-text ml-4">
+                    <h3>Aprovecha la Promo <br>Socio con <BR>YAPE</BR></h3>
+                    <p>Del 15 al 18 de mayo tienes 50% <br>de descuento en entradas 2D y Xtreme</p>
+                    <a href="#" class="btn btn-primary promotion-btn">Ver Más</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promoción 2 -->
+        <div class="col-md-6 mb-4">
+            <div class="promotion-container d-flex justify-content-center align-items-center">
+                <div class="promotion-image">
+                    <img src="{{ url_for('static', filename='images/promotion2.jpg') }}" alt="Promoción 2" class="img-fluid">
+                </div>
+                <div class="promotion-text ml-4">
+                    <h3>Socio, recarga tu canchita</h3>
+                    <p>Con los baldes de Aniversario y Deadpool, <br>recarga canchita.</p>
+                    <a href="#" class="btn btn-primary promotion-btn">Ver Más</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 2 de promociones -->
+    <div class="row justify-content-center">
+        <!-- Promoción 3 -->
+        <div class="col-md-6 mb-4">
+            <div class="promotion-container d-flex justify-content-center align-items-center">
+                <div class="promotion-image">
+                    <img src="{{ url_for('static', filename='images/promotion3.jpg') }}" alt="Promoción 3" class="img-fluid">
+                </div>
+                <div class="promotion-text ml-4">
+                    <h3>Compra tus entradas en <br>preventa <br>y participa del sorteo</h3>
+                    <p>Puedes ganarte un álbum de J-HOPEbr <br> al comprar tu entrada en preventa.</p>
+                    <a href="#" class="btn btn-primary promotion-btn">Ver Más</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promoción 4 -->
+        <div class="col-md-6 mb-4">
+            <div class="promotion-container d-flex justify-content-center align-items-center">
+                <div class="promotion-image">
+                    <img src="{{ url_for('static', filename='images/promotion4.jpg') }}" alt="Promoción 4" class="img-fluid">
+                </div>
+                <div class="promotion-text ml-4">
+                    <h3>Promo 2x1 con Entel</h3>
+                    <p>Eres cine, <br>eres Entel...</p>
+                    <a href="#" class="btn btn-primary promotion-btn">Ver Más</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!-- Footer -->
+<footer class="footer-basic">
+    <div class="container">
+        <!-- Redes Sociales -->
+        <div class="social d-flex justify-content-center mb-4">
+            <a href="#" target="_blank" class="mx-3">
+                <img src="{{ url_for('static', filename='images/facebook-icon.png') }}" alt="Facebook" class="social-icon" style="height: 45px; width: auto;">
+            </a>
+            <a href="#" target="_blank" class="mx-3">
+                <img src="{{ url_for('static', filename='images/twitter-icon.png') }}" alt="Twitter" class="social-icon" style="height: 40px; width: auto;">
+            </a>
+            <a href="#" target="_blank" class="mx-3">
+                <img src="{{ url_for('static', filename='images/instagram-icon.png') }}" alt="Instagram" class="social-icon" style="height: 40px; width: auto;">
+            </a>
+        </div>
+
+        <!-- Enlaces de navegación -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <h5>Programación</h5>
+                <ul>
+                    <li><a href="#">Cartelera</a></li>
+                    <li><a href="#">Próximamente</a></li>
+                    <li><a href="#">Preventas</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Sobre CineDB</h5>
+                <ul>
+                    <li><a href="#">Nosotros</a></li>
+                    <li><a href="#">Salas y Formatos</a></li>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Política de Privacidad</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Otros Servicios</h5>
+                <ul>
+                    <li><a href="#">Eventos Especiales</a></li>
+                    <li><a href="#">Corporativo</a></li>
+                    <li><a href="#">Publicidad</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Contacto</h5>
+                <ul>
+                    <li><a href="#">Escríbenos</a></li>
+                    <li><a href="#">Trabaja con Nosotros</a></li>
+                    <li><a href="#">Libro de Reclamaciones</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- Derechos de autor -->
+        <p class="text-center text-dark-50">&copy; 2025 Proyecto Estructura de Datos y Algoritmos.</p>
+    </div>
+</footer>
+
+<!-- Scripts de Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
