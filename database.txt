@@ -1,0 +1,169 @@
+-- Crear base de datos
+CREATE DATABASE CineDB;
+
+-- Usar la base de datos
+USE CineDB;
+
+-- Tabla para almacenar usuarios
+CREATE TABLE Usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    contraseña VARCHAR(255) NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla para almacenar géneros de las películas
+CREATE TABLE Generos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+-- Tabla para almacenar películas
+CREATE TABLE Peliculas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    duracion INT NOT NULL,  -- Duración en minutos
+    genero_id INT,
+    hora_funcion TIME,  -- Hora de función de la película
+    FOREIGN KEY (genero_id) REFERENCES Generos(id)
+);
+
+-- Tabla para almacenar salas de cine
+CREATE TABLE Salas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    capacidad INT NOT NULL
+);
+
+-- Tabla para almacenar asientos en cada sala (con referencia de letra y número)
+CREATE TABLE Asientos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sala_id INT,
+    fila CHAR(1) NOT NULL,  -- Letra de la fila (A, B, C, D, E, F)
+    numero_asiento INT NOT NULL,  -- Número del asiento en la fila (1, 2, 3, ..., 11)
+    estado ENUM('disponible', 'reservado', 'ocupado') DEFAULT 'disponible',
+    FOREIGN KEY (sala_id) REFERENCES Salas(id),
+    UNIQUE (sala_id, fila, numero_asiento)  -- Asegura que no haya duplicados
+);
+
+-- Tabla para almacenar las reservas
+CREATE TABLE Reservas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    pelicula_id INT,
+    sala_id INT,
+    asiento_id INT,
+    fecha_reserva TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado ENUM('pendiente', 'confirmada', 'cancelada') DEFAULT 'pendiente',
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id),
+    FOREIGN KEY (pelicula_id) REFERENCES Peliculas(id),
+    FOREIGN KEY (sala_id) REFERENCES Salas(id),
+    FOREIGN KEY (asiento_id) REFERENCES Asientos(id)
+);
+
+-- Datos de ejemplo para géneros
+INSERT INTO Generos (nombre) VALUES ('Acción'), ('Comedia'), ('Drama'), ('Terror');
+
+-- Datos de ejemplo para películas
+INSERT INTO Peliculas (titulo, descripcion, duracion, genero_id, hora_funcion) VALUES
+('Avengers: Endgame', 'Los Vengadores deben enfrentarse a Thanos para salvar el universo.', 181, 1, '20:00:00'),
+('The Hangover', 'Un grupo de amigos intenta recordar lo que ocurrió durante su despedida de soltero en Las Vegas.', 100, 2, '22:00:00'),
+('The Pursuit of Happyness', 'La historia de un hombre que lucha por salir de la pobreza.', 117, 3, '18:00:00'),
+('The Conjuring', 'Una pareja de investigadores paranormales enfrenta una entidad maligna.', 112, 4, '23:00:00'),
+('Inception', 'Un ladrón especializado en robar secretos a través del sueño es desafiado con una tarea aparentemente imposible.', 148, 1, '21:00:00'),
+('The Shawshank Redemption', 'La historia de un hombre que es injustamente condenado y su lucha por la libertad en prisión.', 142, 3, '19:00:00'),
+('The Dark Knight', 'Batman enfrenta a un criminal psicópata conocido como el Joker, que amenaza con destruir Gotham City.', 152, 1, '20:30:00');
+
+-- Datos de ejemplo para salas
+INSERT INTO Salas (nombre, capacidad) VALUES
+('Sala 1', 66),
+('Sala 2', 66),
+('Sala 3', 66);
+
+-- Datos de ejemplo para asientos (filas A a F, con 11 asientos por fila)
+INSERT INTO Asientos (sala_id, fila, numero_asiento) VALUES
+(1, 'A', 1), (1, 'A', 2), (1, 'A', 3), (1, 'A', 4), (1, 'A', 5), (1, 'A', 6), (1, 'A', 7), (1, 'A', 8), (1, 'A', 9), (1, 'A', 10), (1, 'A', 11),
+(1, 'B', 1), (1, 'B', 2), (1, 'B', 3), (1, 'B', 4), (1, 'B', 5), (1, 'B', 6), (1, 'B', 7), (1, 'B', 8), (1, 'B', 9), (1, 'B', 10), (1, 'B', 11),
+(1, 'C', 1), (1, 'C', 2), (1, 'C', 3), (1, 'C', 4), (1, 'C', 5), (1, 'C', 6), (1, 'C', 7), (1, 'C', 8), (1, 'C', 9), (1, 'C', 10), (1, 'C', 11),
+(1, 'D', 1), (1, 'D', 2), (1, 'D', 3), (1, 'D', 4), (1, 'D', 5), (1, 'D', 6), (1, 'D', 7), (1, 'D', 8), (1, 'D', 9), (1, 'D', 10), (1, 'D', 11),
+(1, 'E', 1), (1, 'E', 2), (1, 'E', 3), (1, 'E', 4), (1, 'E', 5), (1, 'E', 6), (1, 'E', 7), (1, 'E', 8), (1, 'E', 9), (1, 'E', 10), (1, 'E', 11),
+(1, 'F', 1), (1, 'F', 2), (1, 'F', 3), (1, 'F', 4), (1, 'F', 5), (1, 'F', 6), (1, 'F', 7), (1, 'F', 8), (1, 'F', 9), (1, 'F', 10), (1, 'F', 11),
+(2, 'A', 1), (2, 'A', 2), (2, 'A', 3), (2, 'A', 4), (2, 'A', 5), (2, 'A', 6), (2, 'A', 7), (2, 'A', 8), (2, 'A', 9), (2, 'A', 10), (2, 'A', 11),
+(2, 'B', 1), (2, 'B', 2), (2, 'B', 3), (2, 'B', 4), (2, 'B', 5), (2, 'B', 6), (2, 'B', 7), (2, 'B', 8), (2, 'B', 9), (2, 'B', 10), (2, 'B', 11),
+(2, 'C', 1), (2, 'C', 2), (2, 'C', 3), (2, 'C', 4), (2, 'C', 5), (2, 'C', 6), (2, 'C', 7), (2, 'C', 8), (2, 'C', 9), (2, 'C', 10), (2, 'C', 11),
+(2, 'D', 1), (2, 'D', 2), (2, 'D', 3), (2, 'D', 4), (2, 'D', 5), (2, 'D', 6), (2, 'D', 7), (2, 'D', 8), (2, 'D', 9), (2, 'D', 10), (2, 'D', 11),
+(2, 'E', 1), (2, 'E', 2), (2, 'E', 3), (2, 'E', 4), (2, 'E', 5), (2, 'E', 6), (2, 'E', 7), (2, 'E', 8), (2, 'E', 9), (2, 'E', 10), (2, 'E', 11),
+(2, 'F', 1), (2, 'F', 2), (2, 'F', 3), (2, 'F', 4), (2, 'F', 5), (2, 'F', 6), (2, 'F', 7), (2, 'F', 8), (2, 'F', 9), (2, 'F', 10), (2, 'F', 11),
+(3, 'A', 1), (3, 'A', 2), (3, 'A', 3), (3, 'A', 4), (3, 'A', 5), (3, 'A', 6), (3, 'A', 7), (3, 'A', 8), (3, 'A', 9), (3, 'A', 10), (3, 'A', 11),
+(3, 'B', 1), (3, 'B', 2), (3, 'B', 3), (3, 'B', 4), (3, 'B', 5), (3, 'B', 6), (3, 'B', 7), (3, 'B', 8), (3, 'B', 9), (3, 'B', 10), (3, 'B', 11),
+(3, 'C', 1), (3, 'C', 2), (3, 'C', 3), (3, 'C', 4), (3, 'C', 5), (3, 'C', 6), (3, 'C', 7), (3, 'C', 8), (3, 'C', 9), (3, 'C', 10), (3, 'C', 11),
+(3, 'D', 1), (3, 'D', 2), (3, 'D', 3), (3, 'D', 4), (3, 'D', 5), (3, 'D', 6), (3, 'D', 7), (3, 'D', 8), (3, 'D', 9), (3, 'D', 10), (3, 'D', 11),
+(3, 'E', 1), (3, 'E', 2), (3, 'E', 3), (3, 'E', 4), (3, 'E', 5), (3, 'E', 6), (3, 'E', 7), (3, 'E', 8), (3, 'E', 9), (3, 'E', 10), (3, 'E', 11),
+(3, 'F', 1), (3, 'F', 2), (3, 'F', 3), (3, 'F', 4), (3, 'F', 5), (3, 'F', 6), (3, 'F', 7), (3, 'F', 8), (3, 'F', 9), (3, 'F', 10), (3, 'F', 11);
+
+ALTER TABLE Peliculas
+ADD COLUMN imagen VARCHAR(255);
+
+SET SQL_SAFE_UPDATES = 0;
+
+
+UPDATE Peliculas
+SET imagen = 'avengers_endgame.jpg'
+WHERE titulo = 'Avengers: Endgame';
+
+UPDATE Peliculas
+SET imagen = 'hangover.jpg'
+WHERE titulo = 'The Hangover';
+
+UPDATE Peliculas
+SET imagen = 'happyness.jpg'
+WHERE titulo = 'The Pursuit of Happyness';
+
+UPDATE Peliculas
+SET imagen = 'conjuring.jpg'
+WHERE titulo = 'The Conjuring';
+
+UPDATE Peliculas
+SET imagen = 'inception.jpg'
+WHERE titulo = 'Inception';
+
+UPDATE Peliculas
+SET imagen = 'shawshank_redemption.jpg'
+WHERE titulo = 'The Shawshank Redemption';
+
+UPDATE Peliculas
+SET imagen = 'dark_knight.jpg'
+WHERE titulo = 'The Dark Knight';
+
+SET SQL_SAFE_UPDATES = 0;
+UPDATE Peliculas
+SET imagen = 'hangover.jpg'
+WHERE titulo = 'The Hangover';
+
+UPDATE Peliculas
+SET imagen = 'happyness.jpg'
+WHERE titulo = 'The Pursuit of Happyness';
+
+UPDATE Peliculas
+SET imagen = 'conjuring.jpg'
+WHERE titulo = 'The Conjuring';
+
+UPDATE Peliculas
+SET imagen = 'inception.jpg'
+WHERE titulo = 'Inception';
+
+UPDATE Peliculas
+SET imagen = 'shawshank_redemption.jpg'
+WHERE titulo = 'The Shawshank Redemption';
+
+UPDATE Peliculas
+SET imagen = 'dark_knight.jpg'
+WHERE titulo = 'The Dark Knight';
+
+SET SQL_SAFE_UPDATES = 1;
+
+
+
+
