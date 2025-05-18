@@ -27,19 +27,28 @@ def index():
     for idx, pelicula in enumerate(peliculas):
         lista_peliculas.agregar_pelicula(pelicula[0], pelicula[1], idx, pelicula[2])  # Ahora también pasamos 'imagen'
 
-    # Obtener la primera película
+    # Obtener las tres películas
     pelicula_actual = lista_peliculas.obtener_primera_pelicula()
+    pelicula_siguiente = lista_peliculas.obtener_siguiente(pelicula_actual)
+    pelicula_tercera = lista_peliculas.obtener_siguiente(pelicula_siguiente)
 
-    # Pasar la película actual a la plantilla
+    # Obtener la anterior de la actual
+    pelicula_anterior = lista_peliculas.obtener_anterior(pelicula_actual)
+    pelicula_siguiente_siguiente = lista_peliculas.obtener_siguiente(pelicula_tercera)
+
+    # Pasar las películas actuales a la plantilla
     data = {
         'titulo': 'Peliculas en Estreno',
         'bienvenida': '¡Disfruta de nuestra selección de películas!',
-        'pelicula_actual': pelicula_actual
+        'pelicula_actual': pelicula_actual,
+        'pelicula_siguiente': pelicula_siguiente,
+        'pelicula_tercera': pelicula_tercera,
+        'pelicula_anterior': pelicula_anterior,
+        'pelicula_siguiente_siguiente': pelicula_siguiente_siguiente
     }
 
     return render_template('index.html', data=data)
 
-# Ruta para ver una película específica
 @app.route('/pelicula/<int:indice>', methods=['GET'])
 def ver_pelicula(indice):
     # Crear una lista circular enlazada
@@ -47,7 +56,7 @@ def ver_pelicula(indice):
 
     # Consulta de las películas en la base de datos
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT titulo, descripcion, imagen FROM Peliculas")  # Ahora traemos 'imagen' también
+    cursor.execute("SELECT titulo, descripcion, imagen FROM Peliculas")  # Traemos 'imagen' también
     peliculas = cursor.fetchall()
 
     # Agregar las películas a la lista circular
@@ -61,14 +70,27 @@ def ver_pelicula(indice):
             break
         pelicula_actual = lista_peliculas.obtener_siguiente(pelicula_actual)
 
-    # Pasar la película actual a la plantilla
+    # Obtener las siguientes y anteriores películas
+    pelicula_anterior = lista_peliculas.obtener_anterior(pelicula_actual)
+    pelicula_siguiente = lista_peliculas.obtener_siguiente(pelicula_actual)
+    pelicula_siguiente_siguiente = lista_peliculas.obtener_siguiente(pelicula_siguiente)
+    
+    # Aquí nos aseguramos de que la clave 'pelicula_tercera' esté correctamente definida
+    pelicula_tercera = pelicula_siguiente_siguiente
+
+    # Pasar las películas actuales a la plantilla
     data = {
         'titulo': 'Peliculas en Estreno',
         'bienvenida': '¡Disfruta de nuestra selección de películas!',
-        'pelicula_actual': pelicula_actual
+        'pelicula_actual': pelicula_actual,
+        'pelicula_anterior': pelicula_anterior,
+        'pelicula_siguiente': pelicula_siguiente,
+        'pelicula_siguiente_siguiente': pelicula_siguiente_siguiente,  # Esto ya está aquí
+        'pelicula_tercera': pelicula_tercera  # Añadimos correctamente 'pelicula_tercera'
     }
 
     return render_template('index.html', data=data)
+
 
 @app.route('/login')
 def login():
