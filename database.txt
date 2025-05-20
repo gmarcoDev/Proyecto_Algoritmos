@@ -164,6 +164,19 @@ WHERE titulo = 'The Dark Knight';
 
 SET SQL_SAFE_UPDATES = 1;
 
+INSERT INTO peliculas (id, titulo, descripcion, duracion, genero_id, hora_funcion, imagen)
+VALUES
+(8, 'Spider-Man: No Way Home', 'Peter Parker se enfrenta a las consecuencias de su identidad secreta siendo revelada.', 148, 1, '21:30:00', 'spiderman_no_way_home.jpg'),
+(9, 'Deadpool', 'Un ex-soldado que se convierte en un anti-héroe tras una transformación en su cuerpo y mente.', 108, 1, '20:45:00', 'deadpool.jpg'),
+(10, 'The Hangover Part II', 'Los amigos de Doug intentan recordar lo sucedido en su viaje a Tailandia.', 102, 2, '23:15:00', 'hangover_part_ii.jpg'),
+(11, 'Jumanji: Welcome to the Jungle', 'Cuatro adolescentes son transportados a un peligroso videojuego en el que deben completar misiones.', 119, 2, '20:00:00', 'jumanji_welcome.jpg'),
+(12, 'The Lion King', 'El joven Simba lucha por reclamar su lugar como rey después de la muerte de su padre.', 88, 3, '18:30:00', 'lion_king.jpg'),
+(13, 'It', 'Un grupo de niños enfrenta a un monstruo sobrenatural que se disfraza de payaso.', 135, 4, '22:15:00', 'it.jpg'),
+(14, 'Shutter Island', 'Dos detectives investigan la desaparición de una paciente en un hospital psiquiátrico aislado.', 138, 3, '19:45:00', 'shutter_island.jpg'),
+(15, 'Guardians of the Galaxy', 'Un grupo de inadaptados se une para salvar la galaxia de una amenaza universal.', 121, 1, '20:00:00', 'guardians_of_galaxy.jpg'),
+(16, 'The Exorcist', 'Un sacerdote intenta salvar a una niña poseída por un demonio en un caso de exorcismo real.', 122, 4, '23:00:00', 'exorcist.jpg');
+
+
 
 
 

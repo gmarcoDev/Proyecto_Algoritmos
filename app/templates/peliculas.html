@@ -1,0 +1,38 @@
+<form method="POST" action="/peliculas">
+    <select name="tipo_busqueda" required>
+        <option value="genero">Buscar por Género</option>
+        <option value="nombre">Buscar por Nombre</option>
+    </select>
+    <input type="text" name="busqueda" placeholder="Ingrese el género o nombre" required>
+    <button type="submit">Buscar</button>
+</form>
+
+<!-- Listado de películas por género o nombre -->
+<div>
+    {% if peliculas %}
+        <ul>
+            {% for pelicula in peliculas %}
+                <li>
+                    <strong>{{ pelicula.titulo }}</strong><br>
+                    <em>Género: {{ pelicula.genero }}</em><br>
+                    <p>{{ pelicula.descripcion }}</p>
+                    <img src="{{ url_for('static', filename='images/' + pelicula.imagen) }}" alt="{{ pelicula.titulo }}" style="width: 100px;"><br>
+                    <a href="{{ url_for('ver_pelicula', indice=pelicula.indice) }}">Ver Más</a>
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% elif pelicula %}
+        <div>
+            <h3>{{ pelicula.titulo }}</h3>
+            <p><em>Género: {{ pelicula.genero }}</em></p>
+            <p>{{ pelicula.descripcion }}</p>
+            <img src="{{ url_for('static', filename='images/' + pelicula.imagen) }}" alt="{{ pelicula.titulo }}" style="width: 100px;">
+            <br>
+            <a href="{{ url_for('ver_pelicula', indice=pelicula.indice) }}">Ver Más</a>
+        </div>
+    {% else %}
+        <p>No se encontraron resultados.</p>
+        <a href="{{ url_for('peliculas') }}" class="btn btn-primary">Volver a la búsqueda</a>  <!-- Enlace para volver a la página de búsqueda -->
+    {% endif %}
+</div>

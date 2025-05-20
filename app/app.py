@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify  # render es una función para devolver nuestra plantilla index
+from flask import Flask, render_template, request, jsonify
 from flask_mysqldb import MySQL
 from models.models import NodoPelicula, ListaCircularEnlazada
 
@@ -25,7 +25,7 @@ def index():
 
     # Agregar las películas a la lista circular
     for idx, pelicula in enumerate(peliculas):
-        lista_peliculas.agregar_pelicula(pelicula[0], pelicula[1], idx, pelicula[2])  # Ahora también pasamos 'imagen'
+        lista_peliculas.agregar_pelicula(pelicula[0], pelicula[1], idx, pelicula[2], None)  # 'None' ya que no se está usando el género aquí
 
     # Obtener las tres películas
     pelicula_actual = lista_peliculas.obtener_primera_pelicula()
@@ -56,12 +56,12 @@ def ver_pelicula(indice):
 
     # Consulta de las películas en la base de datos
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT titulo, descripcion, imagen FROM Peliculas")  # Traemos 'imagen' también
+    cursor.execute("SELECT titulo, descripcion, imagen FROM Peliculas")
     peliculas = cursor.fetchall()
 
     # Agregar las películas a la lista circular
     for idx, pelicula in enumerate(peliculas):
-        lista_peliculas.agregar_pelicula(pelicula[0], pelicula[1], idx, pelicula[2])  # Pasamos 'imagen' aquí también
+        lista_peliculas.agregar_pelicula(pelicula[0], pelicula[1], idx, pelicula[2], None)  # 'None' aquí también para no usar género
 
     # Obtener la película actual a partir del índice
     pelicula_actual = lista_peliculas.obtener_primera_pelicula()
@@ -91,6 +91,54 @@ def ver_pelicula(indice):
 
     return render_template('index.html', data=data)
 
+@app.route('/peliculas', methods=['GET', 'POST'])
+def peliculas():
+    lista_peliculas = ListaCircularEnlazada()
+
+    # Obtener los géneros disponibles
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT id, nombre FROM Generos")
+    generos = cursor.fetchall()  # Obtener todos los géneros
+
+    # Consulta de las películas en la base de datos
+    cursor.execute("SELECT id, titulo, descripcion, imagen, genero_id FROM Peliculas")
+    peliculas = cursor.fetchall()  # Obtener todas las películas
+
+    # Agregar las películas a la lista circular con su género correspondiente
+    for idx, pelicula in enumerate(peliculas):
+        # Encuentra el nombre del género basado en el id
+        genero = next((g[1] for g in generos if g[0] == pelicula[4]), None)  # Encuentra el nombre del género
+        lista_peliculas.agregar_pelicula(pelicula[1], pelicula[2], idx, pelicula[3], genero)  # Ahora pasamos 'genero'
+
+    # Si se ha enviado una búsqueda por POST
+    if request.method == 'POST':
+        tipo_busqueda = request.form['tipo_busqueda']
+        busqueda = request.form['busqueda']
+
+        if tipo_busqueda == 'genero':
+            peliculas_encontradas = lista_peliculas.buscar_por_genero(busqueda)  # Buscar por género
+            return render_template('peliculas.html', peliculas=peliculas_encontradas, generos=generos)
+
+        elif tipo_busqueda == 'nombre':
+            pelicula_encontrada = lista_peliculas.buscar_por_nombre(busqueda)  # Buscar por nombre
+            return render_template('peliculas.html', pelicula=pelicula_encontrada, generos=generos)
+
+    # Renderizar la vista con todas las películas si no hay búsqueda
+    # Convertir las tuplas a un formato más amigable para Jinja2
+    peliculas_formateadas = []
+    for idx, pelicula in enumerate(peliculas):
+        pelicula_dict = {
+            'indice': idx,  # Agregar el índice para poder usarlo en el template
+            'titulo': pelicula[1],
+            'descripcion': pelicula[2],
+            'imagen': pelicula[3],
+            'genero': next((g[1] for g in generos if g[0] == pelicula[4]), None),
+        }
+        peliculas_formateadas.append(pelicula_dict)
+
+    return render_template('peliculas.html', peliculas=peliculas_formateadas, generos=generos)
+
+
 
 @app.route('/login')
 def login():
@@ -99,8 +147,6 @@ def login():
 @app.route('/registrarse')
 def registrarse():
     return render_template('registrarse.html')  # Asegúrate de tener esta plantilla
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
