@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request #convierte los datos a formato json 
 from flask_mysqldb import MySQL
 from models.models import NodoPelicula, ListaCircularEnlazada
 
@@ -19,24 +19,24 @@ def index():
     lista_peliculas = ListaCircularEnlazada()
 
     # Consulta de las películas en la base de datos
-    cursor = mysql.connection.cursor()
+    cursor = mysql.connection.cursor() #nuestro puente para la conexion con la db
     cursor.execute("SELECT titulo, descripcion, imagen FROM Peliculas")
-    peliculas = cursor.fetchall()
+    peliculas = cursor.fetchall() #nos devuelve la info en tuplas
 
     # Agregar las películas a la lista circular
-    for idx, pelicula in enumerate(peliculas):
-        lista_peliculas.agregar_pelicula(pelicula[0], pelicula[1], idx, pelicula[2], None)  # 'None' ya que no se está usando el género aquí
+    for idx, pelicula in enumerate(peliculas):  #recorremos todas las peliculas
+        lista_peliculas.agregar_pelicula(pelicula[0], pelicula[1], idx, pelicula[2], None)  # guardamos el titulo la descipcion y la imagen en una lista enlazada y el 'None' ya que no se está usando el género aquí
 
     # Obtener las tres películas
-    pelicula_actual = lista_peliculas.obtener_primera_pelicula()
-    pelicula_siguiente = lista_peliculas.obtener_siguiente(pelicula_actual)
-    pelicula_tercera = lista_peliculas.obtener_siguiente(pelicula_siguiente)
+    pelicula_actual = lista_peliculas.obtener_primera_pelicula()  #dame la primera pelicula 
+    pelicula_siguiente = lista_peliculas.obtener_siguiente(pelicula_actual)  #dame la siguiente 
+    pelicula_tercera = lista_peliculas.obtener_siguiente(pelicula_siguiente)  # luego la q sigue 
 
     # Obtener la anterior de la actual
-    pelicula_anterior = lista_peliculas.obtener_anterior(pelicula_actual)
-    pelicula_siguiente_siguiente = lista_peliculas.obtener_siguiente(pelicula_tercera)
+    pelicula_anterior = lista_peliculas.obtener_anterior(pelicula_actual)  #la anterior a la primera 
+    pelicula_siguiente_siguiente = lista_peliculas.obtener_siguiente(pelicula_tercera)  #una mas q sigue 
 
-    # Pasar las películas actuales a la plantilla
+    # Pasar las películas actuales a la plantilla para mostrar en el index
     data = {
         'titulo': 'Peliculas en Estreno',
         'bienvenida': '¡Disfruta de nuestra selección de películas!',
@@ -47,7 +47,7 @@ def index():
         'pelicula_siguiente_siguiente': pelicula_siguiente_siguiente
     }
 
-    return render_template('index.html', data=data)
+    return render_template('index.html', data=data) 
 
 @app.route('/pelicula/<int:indice>', methods=['GET'])
 def ver_pelicula(indice):
