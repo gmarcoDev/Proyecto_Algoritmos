@@ -1,38 +1,45 @@
 <form method="POST" action="/peliculas">
-    <select name="tipo_busqueda" required>
-        <option value="genero">Buscar por Género</option>
-        <option value="nombre">Buscar por Nombre</option>
+    <label for="tipo_busqueda">Buscar por:</label>
+    <select name="tipo_busqueda" id="tipo_busqueda" onchange="this.form.submit()">
+        <option value="genero" {% if tipo_busqueda == 'genero' %}selected{% endif %}>Género</option>
+        <option value="nombre" {% if tipo_busqueda == 'nombre' %}selected{% endif %}>Nombre</option>
     </select>
-    <input type="text" name="busqueda" placeholder="Ingrese el género o nombre" required>
-    <button type="submit">Buscar</button>
+
+    <label for="busqueda">Seleccione:</label>
+    <select name="busqueda" id="busqueda" onchange="this.form.submit()" required>
+        {% if tipo_busqueda == 'genero' %}
+            <option value="" disabled selected>Seleccione un género</option>
+            {% for genero in generos %}
+                <option value="{{ genero[1] }}" {% if busqueda_seleccionada == genero[1] %}selected{% endif %}>{{ genero[1] }}</option>
+            {% endfor %}
+        {% elif tipo_busqueda == 'nombre' %}
+            <option value="" disabled selected>Seleccione una película</option>
+            {% for pelicula in peliculas_desplegable %}
+                <option value="{{ pelicula.titulo }}" {% if busqueda_seleccionada == pelicula.titulo %}selected{% endif %}>{{ pelicula.titulo }}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+
+    <noscript>
+        <button type="submit">Buscar</button>
+    </noscript>
 </form>
 
-<!-- Listado de películas por género o nombre -->
+<!-- Mostrar resultados -->
 <div>
-    {% if peliculas %}
+    {% if resultados %}
         <ul>
-            {% for pelicula in peliculas %}
-                <li>
-                    <strong>{{ pelicula.titulo }}</strong><br>
-                    <em>Género: {{ pelicula.genero }}</em><br>
-                    <p>{{ pelicula.descripcion }}</p>
-                    <img src="{{ url_for('static', filename='images/' + pelicula.imagen) }}" alt="{{ pelicula.titulo }}" style="width: 100px;"><br>
-                    <a href="{{ url_for('ver_pelicula', indice=pelicula.indice) }}">Ver Más</a>
-                </li>
-                <hr>
-            {% endfor %}
+        {% for pelicula in resultados %}
+            <li>
+                <strong>{{ pelicula.titulo }}</strong><br>
+                <em>Género: {{ pelicula.genero }}</em><br>
+                <p>{{ pelicula.descripcion }}</p>
+                <img src="{{ url_for('static', filename='images/' + pelicula.imagen) }}" alt="{{ pelicula.titulo }}" style="width: 100px;"><br>
+                <a href="{{ url_for('ver_pelicula', indice=pelicula.indice) }}">Ver Más</a>
+            </li>
+        {% endfor %}
         </ul>
-    {% elif pelicula %}
-        <div>
-            <h3>{{ pelicula.titulo }}</h3>
-            <p><em>Género: {{ pelicula.genero }}</em></p>
-            <p>{{ pelicula.descripcion }}</p>
-            <img src="{{ url_for('static', filename='images/' + pelicula.imagen) }}" alt="{{ pelicula.titulo }}" style="width: 100px;">
-            <br>
-            <a href="{{ url_for('ver_pelicula', indice=pelicula.indice) }}">Ver Más</a>
-        </div>
     {% else %}
         <p>No se encontraron resultados.</p>
-        <a href="{{ url_for('peliculas') }}" class="btn btn-primary">Volver a la búsqueda</a>  <!-- Enlace para volver a la página de búsqueda -->
     {% endif %}
 </div>

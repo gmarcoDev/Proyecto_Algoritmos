@@ -93,50 +93,58 @@ def ver_pelicula(indice):
 
 @app.route('/peliculas', methods=['GET', 'POST'])
 def peliculas():
-    lista_peliculas = ListaCircularEnlazada()
-
-    # Obtener los géneros disponibles
     cursor = mysql.connection.cursor()
+
+    # Obtener géneros y películas para los desplegables
     cursor.execute("SELECT id, nombre FROM Generos")
-    generos = cursor.fetchall()  # Obtener todos los géneros
+    generos = cursor.fetchall()
 
-    # Consulta de las películas en la base de datos
     cursor.execute("SELECT id, titulo, descripcion, imagen, genero_id FROM Peliculas")
-    peliculas = cursor.fetchall()  # Obtener todas las películas
+    peliculas_db = cursor.fetchall()
 
-    # Agregar las películas a la lista circular con su género correspondiente
-    for idx, pelicula in enumerate(peliculas):
-        # Encuentra el nombre del género basado en el id
-        genero = next((g[1] for g in generos if g[0] == pelicula[4]), None)  # Encuentra el nombre del género
-        lista_peliculas.agregar_pelicula(pelicula[1], pelicula[2], idx, pelicula[3], genero)  # Ahora pasamos 'genero'
+    lista_peliculas = ListaCircularEnlazada()
+    for idx, pelicula in enumerate(peliculas_db):
+        genero = next((g[1] for g in generos if g[0] == pelicula[4]), None)
+        lista_peliculas.agregar_pelicula(pelicula[1], pelicula[2], idx, pelicula[3], genero)
 
-    # Si se ha enviado una búsqueda por POST
+    # Variables para pasar al template
+    peliculas_desplegable = []
+    resultados = None
+    tipo_busqueda = 'genero'  # valor por defecto
+    busqueda_seleccionada = None
+
     if request.method == 'POST':
-        tipo_busqueda = request.form['tipo_busqueda']
-        busqueda = request.form['busqueda']
+        tipo_busqueda = request.form.get('tipo_busqueda')
+        busqueda_seleccionada = request.form.get('busqueda')
 
         if tipo_busqueda == 'genero':
-            peliculas_encontradas = lista_peliculas.buscar_por_genero(busqueda)  # Buscar por género
-            return render_template('peliculas.html', peliculas=peliculas_encontradas, generos=generos)
-
+            resultados = lista_peliculas.buscar_por_genero(busqueda_seleccionada)
+            peliculas_desplegable = [{'nombre': g[1]} for g in generos]
         elif tipo_busqueda == 'nombre':
-            pelicula_encontrada = lista_peliculas.buscar_por_nombre(busqueda)  # Buscar por nombre
-            return render_template('peliculas.html', pelicula=pelicula_encontrada, generos=generos)
+            pelicula = lista_peliculas.buscar_por_nombre(busqueda_seleccionada)
+            resultados = [pelicula] if pelicula else []
+            peliculas_desplegable = [{'titulo': p[1]} for p in peliculas_db]
+    else:
+        # GET: mostrar todos
+        peliculas_formateadas = []
+        for idx, pelicula in enumerate(peliculas_db):
+            genero = next((g[1] for g in generos if g[0] == pelicula[4]), None)
+            peliculas_formateadas.append({
+                'indice': idx,
+                'titulo': pelicula[1],
+                'descripcion': pelicula[2],
+                'imagen': pelicula[3],
+                'genero': genero,
+            })
+        resultados = peliculas_formateadas
+        peliculas_desplegable = [{'nombre': g[1]} for g in generos]
 
-    # Renderizar la vista con todas las películas si no hay búsqueda
-    # Convertir las tuplas a un formato más amigable para Jinja2
-    peliculas_formateadas = []
-    for idx, pelicula in enumerate(peliculas):
-        pelicula_dict = {
-            'indice': idx,  # Agregar el índice para poder usarlo en el template
-            'titulo': pelicula[1],
-            'descripcion': pelicula[2],
-            'imagen': pelicula[3],
-            'genero': next((g[1] for g in generos if g[0] == pelicula[4]), None),
-        }
-        peliculas_formateadas.append(pelicula_dict)
-
-    return render_template('peliculas.html', peliculas=peliculas_formateadas, generos=generos)
+    return render_template('peliculas.html',
+                        generos=generos,
+                        peliculas_desplegable=peliculas_desplegable,
+                        resultados=resultados,
+                        tipo_busqueda=tipo_busqueda,
+                        busqueda_seleccionada=busqueda_seleccionada)
 
 
 
