@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cines</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body>
+
+<!-- Navbar idéntico al de index.html -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid d-flex justify-content-between">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+        <a class="navbar-brand" href="/">
+          <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Logo CineDB" style="height: 100px; width: auto;">
+        </a>
+        <li class="nav-item"><a class="nav-link" href="/peliculas">Películas</a></li>
+        <li class="nav-item active"><a class="nav-link" href="/cines">Cines</a></li>
+        <li class="nav-item"><a class="nav-link" href="#promociones">Promociones</a></li>
+        <li class="nav-item"><a class="nav-link" href="/dulceria">Dulcería</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <img src="{{ url_for('static', filename='images/user.png') }}" alt="Logo" style="height: 40px; width: auto;" />
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/login">Iniciar sesión</a>
+            <a class="dropdown-item" href="/registrarse">Registrarse</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4" style="color: #333;">Lista de Cines</h2>
+  {% if cines %}
+  <div class="row">
+    {% for cine in cines %}
+    <div class="col-md-6 mb-4">
+      <div class="card promotion-container d-flex justify-content-center align-items-center" style="border-radius: 15px; background-color: #f8f9fa; padding: 20px;">
+        <div class="promotion-text text-left" style="width: 100%;">
+          <h3 style="font-weight: bold; color: #007bff; text-transform: uppercase;">{{ cine.nombre }}</h3>
+          <p><strong>Dirección:</strong> {{ cine.direccion }}</p>
+          <p><strong>Teléfono:</strong> {{ cine.telefono }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-center" style="color: #555;">No se encontraron cines disponibles.</p>
+  {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
