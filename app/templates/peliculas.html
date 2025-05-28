@@ -1,45 +1,126 @@
-<form method="POST" action="/peliculas">
-    <label for="tipo_busqueda">Buscar por:</label>
-    <select name="tipo_busqueda" id="tipo_busqueda" onchange="this.form.submit()">
-        <option value="genero" {% if tipo_busqueda == 'genero' %}selected{% endif %}>Género</option>
-        <option value="nombre" {% if tipo_busqueda == 'nombre' %}selected{% endif %}>Nombre</option>
-    </select>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Películas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body style="background-color: #f7f7f7;">
+ <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid d-flex justify-content-between">
+        <!-- Botón para mostrar el menú en pantallas pequeñas -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <label for="busqueda">Seleccione:</label>
-    <select name="busqueda" id="busqueda" onchange="this.form.submit()" required>
+        <!-- Menú de navegación centrado -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <a class="navbar-brand" href="/">
+                    <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Logo CineDB" style="height: 100px; width: auto;">
+                </a>
+                <li class="nav-item">
+                    <a class="nav-link" href="/peliculas">Películas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cines">Cines</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#promociones">Promociones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dulceria">Dulcería</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ url_for('static', filename='images/user.png') }}" alt="Logo" style="height: 40px; width: auto;">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/login">Iniciar sesión</a>
+                        <a class="dropdown-item" href="/registrarse">Registrarse</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Formulario para filtrar -->
+    <form method="POST" action="/peliculas" class="form-inline justify-content-center mb-5" id="formFiltro">
+      <div class="form-group mx-2">
+        <label for="tipo_busqueda" class="mr-2" style="color: #333;">Buscar por</label>
+        <select id="tipo_busqueda" name="tipo_busqueda" class="form-control">
+          <option value="genero" {% if tipo_busqueda == 'genero' %}selected{% endif %}>Género</option>
+          <option value="nombre" {% if tipo_busqueda == 'nombre' %}selected{% endif %}>Nombre</option>
+        </select>
+      </div>
+
+      <div class="form-group mx-2">
         {% if tipo_busqueda == 'genero' %}
-            <option value="" disabled selected>Seleccione un género</option>
+          <label for="busqueda" class="mr-2" style="color: #333;">Categoría</label>
+          <select id="busqueda" name="busqueda" class="form-control">
+            <option value="" {% if not busqueda_seleccionada %}selected{% endif %}>Todas</option>
             {% for genero in generos %}
-                <option value="{{ genero[1] }}" {% if busqueda_seleccionada == genero[1] %}selected{% endif %}>{{ genero[1] }}</option>
+              <option value="{{ genero[1] }}" {% if busqueda_seleccionada == genero[1] %}selected{% endif %}>{{ genero[1] }}</option>
             {% endfor %}
-        {% elif tipo_busqueda == 'nombre' %}
-            <option value="" disabled selected>Seleccione una película</option>
+          </select>
+        {% else %}
+          <label for="busqueda" class="mr-2" style="color: #333;">Película</label>
+          <select id="busqueda" name="busqueda" class="form-control">
+            <option value="Todas" {% if busqueda_seleccionada == 'Todas' %}selected{% endif %}>Todas</option>
             {% for pelicula in peliculas_desplegable %}
-                <option value="{{ pelicula.titulo }}" {% if busqueda_seleccionada == pelicula.titulo %}selected{% endif %}>{{ pelicula.titulo }}</option>
+              <option value="{{ pelicula['titulo'] }}" {% if busqueda_seleccionada == pelicula['titulo'] %}selected{% endif %}>{{ pelicula['titulo'] }}</option>
             {% endfor %}
+          </select>
         {% endif %}
-    </select>
+      </div>
+    </form>
 
-    <noscript>
-        <button type="submit">Buscar</button>
-    </noscript>
-</form>
-
-<!-- Mostrar resultados -->
-<div>
-    {% if resultados %}
-        <ul>
+    <!-- Mostrar películas -->
+    <div class="row justify-content-center mt-4">
+      {% if resultados %}
         {% for pelicula in resultados %}
-            <li>
-                <strong>{{ pelicula.titulo }}</strong><br>
-                <em>Género: {{ pelicula.genero }}</em><br>
-                <p>{{ pelicula.descripcion }}</p>
-                <img src="{{ url_for('static', filename='images/' + pelicula.imagen) }}" alt="{{ pelicula.titulo }}" style="width: 100px;"><br>
-                <a href="{{ url_for('ver_pelicula', indice=pelicula.indice) }}">Ver Más</a>
-            </li>
+          <div class="col-md-3 mb-4">
+            <div class="card shadow-lg" style="border-radius: 15px; background-color: #fff;">
+              <img src="{{ url_for('static', filename='images/' + pelicula['imagen']) }}" class="card-img-top" alt="{{ pelicula['titulo'] }}" style="height: 250px; object-fit: cover; border-radius: 15px 15px 0 0;">
+              <div class="card-body">
+                <h5 class="card-title text-center" style="font-weight: bold; color: #333;">{{ pelicula['titulo'] }}</h5>
+                <p class="card-text" style="text-align: justify; color: #555; font-size: 14px;">{{ pelicula['descripcion'] | truncate(150) }}</p>
+                <p class="text-center text-muted" style="font-size: 12px;">Género: {{ pelicula['genero'] }}</p>
+                <div class="text-center">
+                  <a href="#" class="btn btn-dark btn-sm" style="transition: background-color 0.3s;">Ver Más</a>
+                </div>
+              </div>
+            </div>
+          </div>
         {% endfor %}
-        </ul>
-    {% else %}
-        <p>No se encontraron resultados.</p>
-    {% endif %}
-</div>
+      {% else %}
+        <p class="text-center" style="font-size: 18px; color: #555;">No se encontraron resultados.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // Cuando cambie el filtro tipo_busqueda, limpiar y enviar el formulario
+    document.getElementById('tipo_busqueda').addEventListener('change', function() {
+      const busqueda = document.getElementById('busqueda');
+      if(busqueda){
+        busqueda.selectedIndex = 0;  // Seleccionar "Todas" o vacío
+      }
+      document.getElementById('formFiltro').submit();
+    });
+
+    // También enviar el formulario automáticamente al cambiar busqueda
+    document.getElementById('busqueda').addEventListener('change', function() {
+      document.getElementById('formFiltro').submit();
+    });
+  </script>
+</body>
+</html>
